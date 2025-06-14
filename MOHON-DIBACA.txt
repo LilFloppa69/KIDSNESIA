@@ -1,0 +1,45 @@
+diwajibkan membuat database dan tabelnya agar dapat melihat hasil (tidak termasuk tabel payment dan payment method, dikarenakan tabel payment 
+tidak bisa di sambung ke web. tabel payment kami integrasikan ke provider payment gatewaynya (Midtrans) dengan API yang tersedia jadi kami 
+tidak bisa membuat koneksi untuk tabel payment yang ada di PHPMyAdmin)
+
+nama database: reservation
+
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    email VARCHAR(100) UNIQUE,
+    password VARCHAR(255),
+    phone VARCHAR(20),
+    role ENUM('user', 'admin') DEFAULT 'user',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE programs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(150),
+    description TEXT,
+    price DECIMAL(10, 2),
+    duration_days INT,
+    image_url VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE reservations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    schedule_id INT,
+    reservation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status ENUM('pending', 'confirmed', 'cancelled') DEFAULT 'pending',
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (schedule_id) REFERENCES program_schedules(id)
+);
+
+CREATE TABLE payments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    reservation_id INT,
+    payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    amount DECIMAL(10, 2),
+    method ENUM('credit_card', 'bank_transfer', 'ewallet'),
+    status ENUM('pending', 'paid', 'failed') DEFAULT 'pending',
+    FOREIGN KEY (reservation_id) REFERENCES reservations(id)
+); (tabel payments tidak bisa disambung tpi masi termasuk sistem karena tabel payments yang asli ada di Midtrans)
